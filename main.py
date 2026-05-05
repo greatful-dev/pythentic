@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from mcp_native.main import mcp_app
 from routes.test import router as test_router
+from tools.main import mcp_app
 
 app = FastAPI(
     lifespan=mcp_app.lifespan

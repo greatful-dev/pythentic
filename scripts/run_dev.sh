@@ -23,8 +23,8 @@ podman run \
   -p 8000:8000 \
   -v $(pwd)/models:/app/models \
   -v $(pwd)/main.py:/app/main.py \
-  -v $(pwd)/agent:/app/agent \
-  -v $(pwd)/mcp_native:/app/mcp_native \
+  -v $(pwd)/agents:/app/agents \
+  -v $(pwd)/tools:/app/tools \
   -v $(pwd)/routes:/app/routes \
   --name $CONTAINER_NAME \
   $IMAGE_NAME

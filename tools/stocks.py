@@ -52,30 +52,3 @@ def get_spy_holdings():
     tickers = df['Ticker'].dropna().to_list()
 
     return tickers
-
-def generate_pentagon_scores():
-    holdings = get_spy_holdings()
-    output = [pentagon_momentum_scores(ticker) for ticker in ['Z']]
-    output = [item for item in output if item]
-    df = pd.DataFrame(output)
-
-    file_path = f'agentics/pentagon_scores_{pd.Timestamp.today().date().isoformat()}.csv'
-    description = """
-    # Methodology
-    # peg ratio: trailing peg ration less than 2
-    # debt to equity: debt to equity less than 40
-    # return on equity: return on equity greater than .15
-    # relative strength indicator: Calculates a binary trend signal (True if bullish, False if bearish) by normalizing the ratio of average gains to average losses onto a 0-100 scale and checking if it exceeds the 50-centerline.
-    # operating cashflow over net income: operating cashflow over net income greater than 1 
-    """
-
-    # 1. Write the description to the file
-    with open(file_path, 'w') as f:
-        f.write(description.strip() + '\\n')
-
-    df.to_csv(
-        f'agentics/pentagon_scores_{pd.Timestamp.today().date().isoformat()}.csv',
-        encoding='utf-8',
-        index=False
-    )
-    return df.to_json()

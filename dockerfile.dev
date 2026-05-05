@@ -1,0 +1,30 @@
+FROM python:3.11 AS build
+
+WORKDIR /app
+
+ENV POETRY_VIRTUAL_ENVS_IN_PROJECT=true
+ARG POETRY_VERSION=1.8.2
+RUN pip install --upgrade pip
+RUN pip install "poetry==$POETRY_VERSION"
+RUN poetry config virtualenvs.in-project true
+
+COPY pyproject.toml poetry.loc[k] ./
+RUN if [ ! -f poetry.lock ]; then echo "WARNING poetry.lock not detected. Lock deps with \"poetry lock\"." >&2 && poetry lock; fi
+RUN poetry install --no-interaction --no-ansi --no-root --without dev
+
+COPY . .
+
+FROM python:3.11-slim as final
+
+WORKDIR /app
+
+COPY --from=build /app /app
+ENV VIRTUAL_ENV_ACTIVATE_FILE=/app/.venv/bin/activate
+
+COPY scripts/entrypoint.sh /usr/local/bin
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+EXPOSE 8000
+
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
